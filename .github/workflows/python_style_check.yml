@@ -1,0 +1,20 @@
+name: python_style_check
+
+on:
+  push:
+    # branches: [main, infer]
+  pull_request:
+    # branches: [main, infer]
+
+jobs:
+  style-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v4
+        with:
+          python-version: "3.11.10"
+      - run: pip install black==25.9.0 -i https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple
+      - run: python .github/check_code.py

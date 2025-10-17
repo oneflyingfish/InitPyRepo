@@ -1,0 +1,14 @@
+exclude: ^(third_party|data|log|outputs)/|\.gitignore$
+
+# If the code hook modifies the file, the modification will be retained and will cause the commit to fail.
+repos:
+  - repo: local
+    hooks:
+      - id: check-style
+        name: "[Hook@check-code-tyle]"
+        entry: python test/test_python_style.py  --only_check=true --contain_stage=true --contain_commit=false
+        language: python
+        additional_dependencies:
+          - black>=24
+        pass_filenames: false
+        require_serial: false
