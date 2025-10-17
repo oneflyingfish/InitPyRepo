@@ -25,9 +25,18 @@ def do_check(
     only_check=False,
     contain_stage=True,
     contain_commit=True,
+    all_file=False,
 ):
-    files = stage_files(ends=[".py"]) if contain_stage else []
-    files = files + (committed_files(ends=[".py"]) if contain_commit else [])
+    if all_file:
+        files = [
+            str(p)
+            for p in Path(".").rglob("*.py")
+            if os.path.exists(p)
+            and not str(p).startswith(tuple(skip_check_file_prefix))
+        ]
+    else:
+        files = stage_files(ends=[".py"]) if contain_stage else []
+        files = files + (committed_files(ends=[".py"]) if contain_commit else [])
 
     if not check_only_assic(files):
         return -1, len(files)
@@ -51,6 +60,13 @@ if __name__ == "__main__":
         help="only check with no fix",
     )
     parser.add_argument(
+        "--all_file",
+        type=str2bool,
+        default=False,
+        required=False,
+        help="check all files except white-files",
+    )
+    parser.add_argument(
         "--contain_stage",
         type=str2bool,
         default=True,
@@ -70,6 +86,7 @@ if __name__ == "__main__":
         only_check=args.only_check,
         contain_stage=args.contain_stage,
         contain_commit=args.contain_commit,
+        all_file=args.all_file,
     )
     if status_code >= 0:
         print(f"SUCCESS: check total {file_count} files pass")
